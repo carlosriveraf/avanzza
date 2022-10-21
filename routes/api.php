@@ -20,4 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('ficheros', [FicheroController::class, 'listarFicheros']);
-Route::post('ficheros/guardar', [FicheroController::class, 'guardarFichero']);
+Route::post('ficheros', [FicheroController::class, 'guardarFichero']);
+Route::delete('ficheros/{idFichero}', [FicheroController::class, 'eliminarFichero']);
+Route::delete('ficheros/delete-fisico/{idFichero}', [FicheroController::class, 'eliminarFicheroFisico']);

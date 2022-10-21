@@ -79,4 +79,68 @@ class FicheroController extends Controller
             'message' => 'Hubo problemas al subir el archivo.',
         ]);
     }
+
+    public function eliminarFichero($idFichero)
+    {
+        $fichero = Fichero::find($idFichero);
+
+        if (!isset($fichero)) {
+            return response()->json([
+                'code' => 400,
+                'status' => 'fail',
+                'message' => 'Fichero no encontrado.',
+            ]);
+        }
+
+        if ($fichero->eliminado == 1) {
+            return response()->json([
+                'code' => 400,
+                'status' => 'fail',
+                'message' => 'Este fichero ya se encuentra eliminado.',
+            ]);
+        }
+
+        $fichero->eliminado = 1;
+
+        if ($fichero->save()) {
+            return response()->json([
+                'code' => 201,
+                'status' => 'success',
+                'message' => 'Fichero eliminado.',
+            ]);
+        }
+
+        return response()->json([
+            'code' => 500,
+            'status' => 'fail',
+            'message' => 'Hubo problemas al eliminar el fichero.',
+        ]);
+    }
+
+    public function eliminarFicheroFisico($idFichero)
+    {
+        $fichero = Fichero::find($idFichero);
+
+        if (!isset($fichero)) {
+            return response()->json([
+                'code' => 400,
+                'status' => 'fail',
+                'message' => 'Fichero no encontrado.',
+            ]);
+        }
+
+        if ($fichero->delete()) {
+            return response()->json([
+                'code' => 201,
+                'status' => 'success',
+                'message' => 'Fichero eliminado de la BD.',
+            ]);
+        }
+
+        return response()->json([
+            'code' => 500,
+            'status' => 'fail',
+            'message' => 'Hubo problemas al eliminar el fichero de la BD.',
+        ]);
+    }
 }
