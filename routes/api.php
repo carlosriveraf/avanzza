@@ -23,3 +23,5 @@ Route::get('ficheros', [FicheroController::class, 'listarFicheros']);
 Route::post('ficheros', [FicheroController::class, 'guardarFichero']);
 Route::delete('ficheros/{idFichero}', [FicheroController::class, 'eliminarFichero']);
 Route::delete('ficheros/delete-fisico/{idFichero}', [FicheroController::class, 'eliminarFicheroFisico']);
+
+Route::get('ficheros/descargar/{idFichero}', [FicheroController::class, 'descargarFichero']);

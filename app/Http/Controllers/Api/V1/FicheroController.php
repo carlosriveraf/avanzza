@@ -14,15 +14,38 @@ class FicheroController extends Controller
 
         $listadoFicheros = [];
         foreach ($rsFicheros as $fichero) {
+
+            $urlDescarga = '1';
+
+            $eliminado = ($fichero->eliminado == 1) ? true : false;
+
             $listadoFicheros[] = [
+                'id' => $fichero->id,
                 'nombre' => $fichero->nombre,
                 'extension' => $fichero->extension,
+                'fecha_registro' => date_format(date_create($fichero->created_at), 'd/m/Y'),
+                'hora_registro' => date_format(date_create($fichero->created_at), 'H:i:s'),
+                'archivo' => $urlDescarga,
+                'eliminado' => $eliminado,
             ];
         }
 
-        echo '<pre>';
-        var_dump($listadoFicheros);
-        echo '</pre>';
+        return response()->json($listadoFicheros);
+    }
+
+    public function descargarFichero($idFichero)
+    {
+        $fichero = Fichero::find($idFichero);
+
+        if (!isset($fichero)) {
+            return response()->json([
+                'code' => 400,
+                'status' => 'fail',
+                'message' => 'Fichero no encontrado.',
+            ]);
+        }
+
+        //$fichero->contenido
     }
 
     public function guardarFichero(Request $request)
