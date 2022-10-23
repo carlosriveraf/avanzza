@@ -14,7 +14,6 @@ class FicheroController extends Controller
 
         $listadoFicheros = [];
         foreach ($rsFicheros as $fichero) {
-
             $urlDescarga = '1';
 
             $eliminado = ($fichero->eliminado == 1) ? true : false;
@@ -30,7 +29,7 @@ class FicheroController extends Controller
             ];
         }
 
-        return response()->json($listadoFicheros);
+        return response()->json($listadoFicheros, 200);
     }
 
     public function descargarFichero($idFichero)
@@ -55,7 +54,7 @@ class FicheroController extends Controller
                 'code' => 400,
                 'status' => 'fail',
                 'message' => 'Ningún fichero fue seleccionado.',
-            ]);
+            ], 400);
         }
 
         if (count($request->archivo) == 0) {
@@ -63,7 +62,7 @@ class FicheroController extends Controller
                 'code' => 400,
                 'status' => 'fail',
                 'message' => 'No hay ficheros para procesar.',
-            ]);
+            ], 400);
         }
 
         $errorMessage = '';
@@ -72,31 +71,16 @@ class FicheroController extends Controller
             if (!isset($archivo)) {
                 $errorMessage .= '(No se encontró el fichero ' . $archivo->getClientOriginalName() . ') ';
                 continue;
-                /* return response()->json([
-                    'code' => 400,
-                    'status' => 'fail',
-                    'message' => 'Debe subir el archivo.',
-                ]); */
             }
 
             if (!$archivo->isValid()) {
                 $errorMessage .= '(No se encontró el fichero ' . $archivo->getClientOriginalName() . ') ';
                 continue;
-                /* return response()->json([
-                    'code' => 400,
-                    'status' => 'fail',
-                    'message' => 'Error inesperado.',
-                ]); */
             }
 
             if (filesize($archivo) > 500000) {
                 $errorMessage .= '(El fichero ' . $archivo->getClientOriginalName() . ' excede el límite de 500kb) ';
                 continue;
-                /* return response()->json([
-                    'code' => 400,
-                    'status' => 'fail',
-                    'message' => 'El archivo no debe pesar más de 500kb.',
-                ]); */
             }
 
             $extension = $archivo->getClientOriginalExtension();
@@ -104,11 +88,6 @@ class FicheroController extends Controller
             if ($extension == '') {
                 $errorMessage .= '(El fichero ' . $archivo->getClientOriginalName() . ' no tiene extensión) ';
                 continue;
-                /* return response()->json([
-                    'code' => 400,
-                    'status' => 'fail',
-                    'message' => 'El archivo no tiene extensión.',
-                ]); */
             }
 
             $nombre = substr($archivo->getClientOriginalName(), 0, -1 * (strlen($extension) + 1));
@@ -131,7 +110,7 @@ class FicheroController extends Controller
             'code' => 201,
             'status' => 'success',
             'message' => $exito . ' fichero(s) subidos con éxito ' . $errorMessage,
-        ]);
+        ], 201);
     }
 
     public function eliminarFichero($idFichero)
@@ -143,7 +122,7 @@ class FicheroController extends Controller
                 'code' => 400,
                 'status' => 'fail',
                 'message' => 'Fichero no encontrado.',
-            ]);
+            ], 400);
         }
 
         if ($fichero->eliminado == 1) {
@@ -151,7 +130,7 @@ class FicheroController extends Controller
                 'code' => 400,
                 'status' => 'fail',
                 'message' => 'Este fichero ya se encuentra eliminado.',
-            ]);
+            ], 400);
         }
 
         $fichero->eliminado = 1;
@@ -161,14 +140,14 @@ class FicheroController extends Controller
                 'code' => 201,
                 'status' => 'success',
                 'message' => 'Fichero eliminado.',
-            ]);
+            ], 201);
         }
 
         return response()->json([
             'code' => 500,
             'status' => 'fail',
             'message' => 'Hubo problemas al eliminar el fichero.',
-        ]);
+        ], 500);
     }
 
     public function eliminarFicheroFisico($idFichero)
@@ -180,7 +159,7 @@ class FicheroController extends Controller
                 'code' => 400,
                 'status' => 'fail',
                 'message' => 'Fichero no encontrado.',
-            ]);
+            ], 400);
         }
 
         if ($fichero->delete()) {
@@ -188,13 +167,13 @@ class FicheroController extends Controller
                 'code' => 201,
                 'status' => 'success',
                 'message' => 'Fichero eliminado de la BD.',
-            ]);
+            ], 201);
         }
 
         return response()->json([
             'code' => 500,
             'status' => 'fail',
             'message' => 'Hubo problemas al eliminar el fichero de la BD.',
-        ]);
+        ], 500);
     }
 }

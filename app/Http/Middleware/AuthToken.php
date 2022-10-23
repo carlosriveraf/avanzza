@@ -21,7 +21,7 @@ class AuthToken
                 'code' => 401,
                 'status' => 'fail',
                 'message' => 'Token no encontrado o no coincide.',
-            ]);
+            ], 401);
         }
 
         return $next($request);

@@ -50,13 +50,12 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('tresconsultasminuto', function (Request $request) {
-
             return Limit::perMinute(3)->by(request()->method() . '|' . request()->path())->response(function (Request $request, array $headers) {
                 return response()->json([
                     'code' => 429,
                     'status' => 'fail',
                     'message' => 'Solo puede hacer 3 solicitudes por minuto.',
-                ]);
+                ], 429);
             });
         });
     }
