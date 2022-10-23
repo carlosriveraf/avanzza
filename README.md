@@ -12,7 +12,7 @@ Todas las url's necesitan el parámetro "token" igual a "12345" en el header de 
 
 URLS:
 GET http://127.0.0.1:8000/api/ficheros
-
+<br>
 POST http://127.0.0.1:8000/api/ficheros
 DELETE http://127.0.0.1/avanzza/public/api/ficheros/{idFichero}
 DELETE http://127.0.0.1/avanzza/public/api/ficheros/delete-fisico/{idFichero}
