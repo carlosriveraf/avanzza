@@ -15,4 +15,11 @@ class Fichero extends Model
      * @var string
      */
     protected $table = 'ficheros';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['nombre', 'extension', 'contenido'];
 }

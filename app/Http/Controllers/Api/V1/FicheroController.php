@@ -54,52 +54,109 @@ class FicheroController extends Controller
             return response()->json([
                 'code' => 400,
                 'status' => 'fail',
-                'message' => 'Debe subir el archivo.',
+                'message' => 'Ningún fichero fue seleccionado.',
             ]);
         }
 
-        if (!$request->archivo->isValid()) {
+        if (count($request->archivo) == 0) {
             return response()->json([
                 'code' => 400,
                 'status' => 'fail',
-                'message' => 'Error inesperado.',
+                'message' => 'No hay ficheros para procesar.',
             ]);
         }
 
-        if (filesize($request->archivo) > 500000) {
+        $errorMessage = '';
+        $exito = 0;
+        foreach ($request->archivo as $archivo) {
+            if (!isset($archivo)) {
+                $errorMessage .= '(No se encontró el fichero ' . $archivo->getClientOriginalName() . ') ';
+                continue;
+                /* return response()->json([
+                    'code' => 400,
+                    'status' => 'fail',
+                    'message' => 'Debe subir el archivo.',
+                ]); */
+            }
+
+            if (!$archivo->isValid()) {
+                $errorMessage .= '(No se encontró el fichero ' . $archivo->getClientOriginalName() . ') ';
+                continue;
+                /* return response()->json([
+                    'code' => 400,
+                    'status' => 'fail',
+                    'message' => 'Error inesperado.',
+                ]); */
+            }
+
+            if (filesize($archivo) > 500000) {
+                $errorMessage .= '(El fichero ' . $archivo->getClientOriginalName() . ' excede el límite de 500kb) ';
+                continue;
+                /* return response()->json([
+                    'code' => 400,
+                    'status' => 'fail',
+                    'message' => 'El archivo no debe pesar más de 500kb.',
+                ]); */
+            }
+
+            $extension = $archivo->getClientOriginalExtension();
+
+            if ($extension == '') {
+                $errorMessage .= '(El fichero ' . $archivo->getClientOriginalName() . ' no tiene extensión) ';
+                continue;
+                /* return response()->json([
+                    'code' => 400,
+                    'status' => 'fail',
+                    'message' => 'El archivo no tiene extensión.',
+                ]); */
+            }
+
+            $nombre = substr($archivo->getClientOriginalName(), 0, -1 * (strlen($extension) + 1));
+
+            try {
+                $ficheros = Fichero::create([
+                    'nombre' => $nombre,
+                    'extension' => $extension,
+                    'contenido' => $archivo->get(),
+                ]);
+
+                $exito++;
+            } catch (\Throwable $th) {
+                $errorMessage .= '(Error al guardar el fichero ' . $archivo->getClientOriginalName() . ') ';
+                continue;
+            }
+
+            /* $fichero = new Fichero();
+            $fichero->nombre = $nombre;
+            $fichero->extension = $extension;
+            $fichero->contenido = $archivo->get();
+            $fichero->save();
+
+            if ($fichero->save()) {
+                return response()->json([
+                    'code' => 201,
+                    'status' => 'success',
+                    'message' => 'Archivo subido con éxito.',
+                ]);
+            }
+
             return response()->json([
-                'code' => 400,
+                'code' => 500,
                 'status' => 'fail',
-                'message' => 'El archivo no debe pesar más de 500kb.',
-            ]);
+                'message' => 'Hubo problemas al subir el archivo.',
+            ]); */
         }
 
-        $extension = $request->archivo->getClientOriginalExtension();
+        //return var_dump($listadoFicheros);
 
-        if ($extension == '') {
-            return response('El archivo no tiene extensión.', 400);
-        }
+        //$ficheros = Fichero::create($listadoFicheros);
 
-        $nombre = substr($request->archivo->getClientOriginalName(), 0, -1 * (strlen($extension) + 1));
-
-        $fichero = new Fichero();
-        $fichero->nombre = $nombre;
-        $fichero->extension = $extension;
-        $fichero->contenido = $request->archivo->get();
-        $fichero->save();
-
-        if ($fichero->save()) {
-            return response()->json([
-                'code' => 201,
-                'status' => 'success',
-                'message' => 'Archivo subido con éxito.',
-            ]);
-        }
+        //$ficheros = Fichero::create(['nombre' => 'nombre', 'extension' => 'extension', 'contenido' => 'contenido']);
 
         return response()->json([
-            'code' => 500,
-            'status' => 'fail',
-            'message' => 'Hubo problemas al subir el archivo.',
+            'code' => 201,
+            'status' => 'success',
+            'message' => $exito . ' fichero(s) subidos con éxito ' . $errorMessage,
         ]);
     }
 
