@@ -125,33 +125,7 @@ class FicheroController extends Controller
                 $errorMessage .= '(Error al guardar el fichero ' . $archivo->getClientOriginalName() . ') ';
                 continue;
             }
-
-            /* $fichero = new Fichero();
-            $fichero->nombre = $nombre;
-            $fichero->extension = $extension;
-            $fichero->contenido = $archivo->get();
-            $fichero->save();
-
-            if ($fichero->save()) {
-                return response()->json([
-                    'code' => 201,
-                    'status' => 'success',
-                    'message' => 'Archivo subido con éxito.',
-                ]);
-            }
-
-            return response()->json([
-                'code' => 500,
-                'status' => 'fail',
-                'message' => 'Hubo problemas al subir el archivo.',
-            ]); */
         }
-
-        //return var_dump($listadoFicheros);
-
-        //$ficheros = Fichero::create($listadoFicheros);
-
-        //$ficheros = Fichero::create(['nombre' => 'nombre', 'extension' => 'extension', 'contenido' => 'contenido']);
 
         return response()->json([
             'code' => 201,
